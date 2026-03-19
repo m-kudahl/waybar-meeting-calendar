@@ -1,0 +1,13 @@
+#!/bin/bash
+[ -f /tmp/clock-waybar-loading ] && exit 0
+touch /tmp/clock-waybar-loading
+
+STATE_FILE="/tmp/clock-waybar-month-offset"
+OFFSET=$(cat "$STATE_FILE" 2>/dev/null || echo "0")
+if [ "$1" = "up" ]; then
+    OFFSET=$((OFFSET + 1))
+else
+    OFFSET=$((OFFSET - 1))
+fi
+echo "$OFFSET" > "$STATE_FILE"
+kill -RTMIN+11 $(pidof waybar)

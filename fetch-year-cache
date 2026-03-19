@@ -1,0 +1,17 @@
+#!/bin/bash
+# Fetches a full year of gcalcli events into the shared cache directory.
+# Usage: fetch-year-cache <year> [ttl_seconds]
+# Skips the fetch if the cache file is younger than ttl_seconds (default: 300).
+
+CACHE_DIR="$HOME/.cache/clock-waybar"
+mkdir -p "$CACHE_DIR"
+
+year=$1
+ttl=${2:-300}
+cfile="$CACHE_DIR/events-${year}.tsv"
+
+if [ ! -f "$cfile" ] || [ $(( $(date +%s) - $(stat -c %Y "$cfile") )) -gt $ttl ]; then
+    gcalcli --nocolor agenda "${year}-01-01" "${year}-12-31" \
+        --nodeclined --details=end --details=url --tsv \
+        > "$cfile" 2>/dev/null
+fi

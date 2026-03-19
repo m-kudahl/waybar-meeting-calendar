@@ -1,0 +1,15 @@
+#!/bin/bash
+# Middle-click handler: resets the month view and forces a fresh cache fetch.
+
+SCRIPT_DIR="$(dirname "$0")"
+CACHE_DIR="$HOME/.cache/clock-waybar"
+
+echo 0 > /tmp/clock-waybar-month-offset
+kill -RTMIN+11 $(pidof waybar)
+
+(
+    year=$(date +%Y)
+    rm -f "$CACHE_DIR/events-${year}.tsv"
+    "$SCRIPT_DIR/fetch-year-cache" "$year"
+    kill -RTMIN+11 $(pidof waybar)
+) &

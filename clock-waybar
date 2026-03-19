@@ -1,0 +1,25 @@
+#!/bin/bash
+# Waybar clock module: renders time text and a calendar/meetings tooltip.
+# Runs every 60s and on clock-waybar-scroll and clock-waybar-refresh
+#
+# The /tmp/clock-waybar-loading lock is set by clock-waybar-scroll to debounce rapid scrolling
+trap 'rm -f /tmp/clock-waybar-loading' EXIT
+
+SCRIPT_DIR="$(dirname "$0")"
+CACHE_DIR="$HOME/.cache/clock-waybar"
+
+OFFSET=$(cat /tmp/clock-waybar-month-offset 2>/dev/null || echo "0")
+text=$(LC_TIME=da_DK.UTF-8 date '+%a %H:%M')
+
+# Determine which month/year to display based on scroll offset
+MONTH_START=$(date -d "$(date +%Y-%m-01) +${OFFSET} months" +"%Y-%m-%d")
+CAL_MONTH=$(date -d "$MONTH_START" +"%m")
+CAL_YEAR=$(date -d "$MONTH_START" +"%Y")
+
+calendar=$(LC_TIME=da_DK.UTF-8 cal -w -m "$CAL_MONTH" "$CAL_YEAR")
+
+# Fetch events for the calendar year
+"$SCRIPT_DIR/fetch-year-cache" "$CAL_YEAR" 300
+
+python3 "$SCRIPT_DIR/clock-waybar-render.py" \
+    "$text" "$calendar" "$CACHE_DIR/events-${CAL_YEAR}.tsv" "$CAL_MONTH" "$CAL_YEAR"
