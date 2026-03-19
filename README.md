@@ -1,3 +1,5 @@
+
+
 # waybar-meeting-calendar
 
 Two [Waybar](https://github.com/Alexays/Waybar) modules for [Omarchy](https://omarchy.org) that integrate Google Calendar into your bar — a next-meeting ticker and a scrollable calendar tooltip with a weekly agenda.
@@ -5,6 +7,11 @@ Two [Waybar](https://github.com/Alexays/Waybar) modules for [Omarchy](https://om
 > Designed for Omarchy. Should work on any Waybar setup with minor adjustments to paths and CSS.
 
 ---
+
+## Todo
+- [ ] Make sure Agenda Box and Calendar is always same width in tooltip
+- [ ] Center the content in tooltip
+- [ ] Implement notification sound
 
 ## Screenshots
 
